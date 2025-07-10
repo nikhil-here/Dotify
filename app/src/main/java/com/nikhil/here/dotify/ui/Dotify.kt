@@ -5,11 +5,6 @@ import android.graphics.Bitmap.createBitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.Rect
-import android.util.Log
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,24 +12,17 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.get
-import kotlin.math.roundToInt
 
 private const val TAG = "Dotify"
 
@@ -45,8 +33,6 @@ fun DottedText(
     textScale: Float
 ) {
     BoxWithConstraints(modifier) {
-        val width = this.maxWidth
-        Log.i(TAG, "DottedText: $text")
         val bitmap = remember(text, textScale) { renderTextToBitmap(text, textScale, this.maxWidth.value, this.maxHeight.value) }
         val dotMatrix = remember(bitmap) { bitmapToDotMatrix(bitmap, 30, 30) }
         DotMatrixDisplay(
@@ -63,7 +49,6 @@ fun DotMatrixDisplay(
     dotMatrix: List<List<Int>>,
     dotSize: Dp
 ) {
-    Log.i(TAG, "DotMatrixDisplay: \n${dotMatrix.joinToString("\n") { it.joinToString() }}.")
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -76,21 +61,14 @@ fun DotMatrixDisplay(
                     val targetColor = if (alpha > 0) {
                         MaterialTheme.colorScheme.primary
                     } else {
-                        MaterialTheme.colorScheme.primaryContainer
+                        MaterialTheme.colorScheme.background
                     }
-
-                    val animatedColor by animateColorAsState(
-                        targetValue = targetColor,
-                        animationSpec = tween(durationMillis = 300), // Adjust duration as needed
-                        label = "DotColorAnimation"
-                    )
-
                     Box(
                         modifier = Modifier
                             .size(dotSize)
                             .padding(1.dp)
                             .background(
-                                color = animatedColor,
+                                color = targetColor,
                                 shape = CircleShape
                             )
                     )
@@ -131,7 +109,7 @@ fun bitmapToDotMatrix(bitmap: Bitmap, rows: Int, cols: Int): List<List<Int>> {
             val green = Color.green(pixel)
             val blue = Color.blue(pixel)
             val alpha = Color.alpha(pixel)
-            print(" $red $green $blue $alpha ")
+            print(" $alpha ")
             row.add(alpha) // Threshold for "dark" pixel
         }
         println()

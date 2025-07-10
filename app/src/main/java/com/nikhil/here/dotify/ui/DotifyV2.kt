@@ -1,18 +1,15 @@
 package com.nikhil.here.dotify.ui
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.GenericShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,10 +18,7 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -43,9 +37,7 @@ fun DottedTextV2(
     ) {
         val width = this.maxWidth.value
         val height = this.maxHeight.value
-        val textSize by remember(textScale) {
-            mutableFloatStateOf(Math.min(width, height) * textScale)
-        }
+        val textSize by remember(textScale) { mutableFloatStateOf(Math.min(width, height) * textScale) }
         val dotMatrix = List(30) { IntArray(30) }
         Box(
             modifier = Modifier
@@ -66,30 +58,7 @@ fun DottedTextV2(
                 dotMatrix.forEach { row ->
                     Row {
                         row.forEach { alpha ->
-                            val CornerCutoutShape = GenericShape { size, _ ->
-                                val cornerRadius = size.width / 2f
-                                Log.i(
-                                    TAG,
-                                    "DottedTextV2: CornerCutoutShape size $size cornerRadius $cornerRadius"
-                                )
-                                val outerRect = Path().apply {
-                                    // Full rectangle
-                                    addRect(Rect(Offset.Zero, size))
-                                }
-                                val centerOval = Path().apply {
-                                    // Subtract circle from top-left corner
-                                    addOval(
-                                        Rect(
-                                            Offset(size.width / 2, size.height / 2),
-                                            cornerRadius
-                                        ),
-                                    )
-                                }
-                                val result = outerRect.minus(centerOval)
-                                //addPath(path2)
-                                addPath(result)
-                            }
-
+                            //CornerCutout Box
                             Box(
                                 modifier = Modifier
                                     .size(8.dp)
@@ -98,6 +67,7 @@ fun DottedTextV2(
                                         shape = CornerCutoutShape
                                     )
                             )
+                            //Horizontal Padding
                             Box(
                                 modifier = Modifier
                                     .width(4.dp)
@@ -105,8 +75,8 @@ fun DottedTextV2(
                                     .background(MaterialTheme.colorScheme.primaryContainer)
                             )
                         }
-
                     }
+                    //Line Spacing
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -117,6 +87,4 @@ fun DottedTextV2(
             }
         }
     }
-
-
 }
